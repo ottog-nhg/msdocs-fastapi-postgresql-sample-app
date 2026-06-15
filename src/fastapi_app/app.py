@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 from sqlmodel import Session, select
 
 from .models import Restaurant, Review, engine
+from .mcp_server import mcp, mcp_lifespan
 
 # Setup logger and Azure Monitor:
 logger = logging.getLogger("app")
@@ -21,7 +22,6 @@ if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
 
 
 # Setup FastAPI app:
-from .mcp_server import mcp, mcp_lifespan
 app = FastAPI(lifespan=mcp_lifespan)
 app.mount("/mcp", mcp.streamable_http_app())
 parent_path = pathlib.Path(__file__).parent.parent
