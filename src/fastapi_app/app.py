@@ -54,19 +54,22 @@ async def index(request: Request, session: Session = Depends(get_db_session)):
         restaurant_dict["stars_percent"] = round((float(avg_rating) / 5.0) * 100) if review_count > 0 else 0
         restaurants.append(restaurant_dict)
 
-    return templates.TemplateResponse("index.html", {"request": request, "restaurants": restaurants})
+    return templates.TemplateResponse(request, "index.html", {"restaurants": restaurants})
 
 
 @app.get("/create", response_class=HTMLResponse)
 async def create_restaurant(request: Request):
     logger.info("Request for add restaurant page received")
-    return templates.TemplateResponse("create_restaurant.html", {"request": request})
+    return templates.TemplateResponse(request, "create_restaurant.html", {})
 
 
 @app.post("/add", response_class=RedirectResponse)
 async def add_restaurant(
-    request: Request, restaurant_name: str = Form(...), street_address: str = Form(...), description: str = Form(...),
-    session: Session = Depends(get_db_session)
+    request: Request,
+    restaurant_name: str = Form(...),
+    street_address: str = Form(...),
+    description: str = Form(...),
+    session: Session = Depends(get_db_session),
 ):
     logger.info("name: %s address: %s description: %s", restaurant_name, street_address, description)
     restaurant = Restaurant()
@@ -96,9 +99,7 @@ async def details(request: Request, id: int, session: Session = Depends(get_db_s
     restaurant_dict["review_count"] = review_count
     restaurant_dict["stars_percent"] = round((float(avg_rating) / 5.0) * 100) if review_count > 0 else 0
 
-    return templates.TemplateResponse(
-        "details.html", {"request": request, "restaurant": restaurant_dict, "reviews": reviews}
-    )
+    return templates.TemplateResponse(request, "details.html", {"restaurant": restaurant_dict, "reviews": reviews})
 
 
 @app.post("/review/{id}", response_class=RedirectResponse)
